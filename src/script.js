@@ -4,22 +4,14 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import * as dat from "lil-gui";
 import * as CANNON from "cannon-es";
 import CannonDebugger from 'cannon-es-debugger'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 
 /**
  * Debug
  */
 const gui = new dat.GUI();
 const debugObject = {};
-
-debugObject.createSphere = () => {
-  createSphere(Math.random() * 0.5, {
-    x: (Math.random() - 0.5) * 3,
-    y: 3,
-    z: (Math.random() - 0.5) * 3,
-  });
-};
-
-gui.add(debugObject, "createSphere");
 
 debugObject.createBox = () => {
   createBox(Math.random(), Math.random(), Math.random(), {
@@ -49,15 +41,18 @@ gui.add(debugObject, "reset");
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
 
-// Scene
+//World creation
 const scene = new THREE.Scene()
 const world = new CANNON.World()
 const cannonDebugger = new CannonDebugger(scene, world, {
   color: 0xffff,
   
 })
+//helpers
 const axesHelper = new THREE.AxesHelper(15);
 scene.add(axesHelper);
+
+
 
 /**
  * Textures
@@ -93,51 +88,12 @@ const defaultContactMaterial = new CANNON.ContactMaterial(
 );
 world.defaultContactMaterial = defaultContactMaterial;
 
-// Floor
-const floorShape = new CANNON.Box(new CANNON.Vec3(25, 25, 0.1));
-const floorBody = new CANNON.Body();
-floorBody.mass = 0;
-floorBody.addShape(floorShape);
-floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(-1, 0, 0), Math.PI * 0.5);
-world.addBody(floorBody);
 
 /**
  * Utils
  */
 const objectsToUpdate = [];
 
-//create sphere
-const sphereGeometry = new THREE.SphereGeometry(1, 20, 20);
-const sphereMaterial = new THREE.MeshStandardMaterial({
-  metalness: 0.3,
-  roughness: 0.4,
-  envMap: environmentMapTexture,
-  envMapIntensity: 0.5,
-});
-const createSphere = (radius, position) => {
-  // Three.js mesh
-  const mesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
-  mesh.castShadow = true;
-  mesh.scale.set(radius, radius, radius);
-  mesh.position.copy(position);
-  scene.add(mesh);
-
-  // Cannon.js body
-  const shape = new CANNON.Sphere(radius);
-
-  const body = new CANNON.Body({
-    mass: 1,
-    position: new CANNON.Vec3(0, 3, 0),
-    shape: shape,
-    material: defaultMaterial,
-  });
-  body.position.copy(position);
-  // body.addEventListener('collide', playHitSound)
-  world.addBody(body);
-
-  // Save in objects
-  objectsToUpdate.push({ mesh, body });
-};
 
 // Create box
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
@@ -167,7 +123,6 @@ const createBox = (width, height, depth, position) => {
     material: defaultMaterial,
   });
   body.position.copy(position);
-  // body.addEventListener('collide', playHitSound)
   world.addBody(body);
 
   // Save in objects
@@ -175,6 +130,16 @@ const createBox = (width, height, depth, position) => {
 };
 
 createBox(1, 1.5, 2, { x: 0, y: 3, z: 0 });
+
+
+// gltf model lodader
+const gltfLoader = new GLTFLoader()
+gltfLoader.load(
+  'SLF.glb',
+  (gltf) => {
+    console.log (gltf)
+  }
+)
 
 //WALLS
 
@@ -268,6 +233,13 @@ const floor = new THREE.Mesh(
 floor.receiveShadow = true;
 floor.rotation.x = -Math.PI * 0.5;
 scene.add(floor);
+//physics
+const floorShape = new CANNON.Plane();
+const floorBody = new CANNON.Body();
+floorBody.mass = 0;
+floorBody.addShape(floorShape);
+floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(-1, 0, 0), Math.PI * 0.5);
+world.addBody(floorBody);
 
 /**
  * Lights
