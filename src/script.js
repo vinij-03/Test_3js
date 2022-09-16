@@ -133,13 +133,8 @@ createBox(1, 1.5, 2, { x: 0, y: 3, z: 0 });
 
 
 // gltf model lodader
-const gltfLoader = new GLTFLoader()
-gltfLoader.load(
-  'SLF.glb',
-  (gltf) => {
-    console.log (gltf)
-  }
-)
+
+const gltfLoader = new GLTFLoader();  
 
 //WALLS
 
