@@ -6,18 +6,18 @@ import * as CANNON from "cannon-es";
 import CannonDebugger from 'cannon-es-debugger'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { CharacterControls } from "./controls";
+import { world } from "./keys";
 import * as dat from 'lil-gui'
 
 //Creating three and cannon world-------------------------------
 const canvas = document.querySelector("canvas.webgl");
 const scene = new THREE.Scene()
-const world = new CANNON.World()
 world.broadphase = new CANNON.SAPBroadphase(world);
 world.allowSleep = true;
 world.gravity.set(0, -9.82, 0);
 
 //Helpers
-
+// const helper= new CannonHelper(this.scene);
 const cannonDebugger = new CannonDebugger(scene, world, {
   color: 0xffff,
   
@@ -36,7 +36,7 @@ scene.add( gridHelper );
  debugObject.createSphere = () =>
  {
 	 createSphere(
-		 Math.random() * 0.5,
+		 Math.random() * 2,
 		 {
 			 x: (Math.random() - 0.5) * 3,
 			 y: 3,
@@ -133,16 +133,16 @@ orbitControl.update(orbitControl)
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.2);
-directionalLight.castShadow = true;
-directionalLight.shadow.mapSize.set(1024, 1024);
-directionalLight.shadow.camera.far = 15;
-directionalLight.shadow.camera.left = -7;
-directionalLight.shadow.camera.top = 7;
-directionalLight.shadow.camera.right = 7;
-directionalLight.shadow.camera.bottom = -7;
-directionalLight.position.set(5, 5, 5);
-scene.add(directionalLight);
+// const directionalLight = new THREE.DirectionalLight(0xffffff, 0.2);
+// directionalLight.castShadow = true;
+// directionalLight.shadow.mapSize.set(1024, 1024);
+// directionalLight.shadow.camera.far = 15;
+// directionalLight.shadow.camera.left = -7;
+// directionalLight.shadow.camera.top = 7;
+// directionalLight.shadow.camera.right = 7;
+// directionalLight.shadow.camera.bottom = -7;
+// directionalLight.position.set(5, 5, 5);
+// scene.add(directionalLight);
 
 
 
@@ -170,7 +170,7 @@ const wallN = new THREE.Mesh(
   //physics
   const wallNShape = new CANNON.Box(new CANNON.Vec3(25, 5, 0.1));
   const wallNBody = new CANNON.Body();
-  wallNBody.mass = 0;
+  wallNBody.mass = 1;
   wallNBody.addShape(wallNShape);
   wallNBody.position.set(-25, 5, 0);
   wallNBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0,1,0), Math.PI*0.5);
@@ -195,7 +195,7 @@ const wallN = new THREE.Mesh(
   //physics
   const wallSShape = new CANNON.Box(new CANNON.Vec3(25, 5, 0.1));
   const wallSBody = new CANNON.Body();
-  wallSBody.mass = 0;
+  wallSBody.mass = 1;
   wallSBody.position.set(25,5,0)
   wallSBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI * 0.5)
   wallSBody.addShape(wallSShape);
@@ -242,7 +242,7 @@ const floor = new THREE.Mesh(
   floor.rotation.x = -Math.PI * 0.5;
   scene.add(floor);
   //physics
-  const floorShape = new CANNON.Plane();
+  const floorShape = new CANNON.Box(new CANNON.Vec3(26, 26, 0.1));
   const floorBody = new CANNON.Body();
   floorBody.mass = 0;
   floorBody.addShape(floorShape);
@@ -296,24 +296,13 @@ function createCharacter(Char)
 		  });
 
 		  //model physics
-		  const shape = new CANNON.Box(
-			new CANNON.Vec3(3,3, 3)
-		  );
-		
-		  const body = new CANNON.Body({
-			mass: 100000,
-			position: new CANNON.Vec3(0, 3, 0),
-			material: defaultMaterial,
-		  });
-		  body.addShape(shape);
-		//   body.position.copy(position);
-		  world.addBody(body);
+		  
 
 
 		  characterControls = new CharacterControls(
 			  model,
 			  mixer,
-			  body,
+			  // body,
 			//   body1,
 			  animationsMap,
 			  orbitControl,

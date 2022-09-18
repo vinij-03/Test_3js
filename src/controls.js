@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import * as CANNON from 'cannon-es';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { A, D, DIRECTIONS, S, W } from './keys'
+import { A, D, DIRECTIONS, S, W, world} from './keys'
 
 
 export class CharacterControls {
@@ -28,14 +28,14 @@ export class CharacterControls {
 
     constructor(model,
         mixer, 
-        body,
+        // body,
         // body1,
         animationsMap,
         orbitControl ,
         camera,
         currentAction) {
         this.model = model
-        this.body  = body
+        // this.body  = body
         // this.body1 = body1
         this.mixer = mixer
         this.animationsMap = animationsMap
@@ -102,24 +102,31 @@ export class CharacterControls {
             // move model & camera
             const moveX = this.walkDirection.x * velocity * delta
             const moveZ = this.walkDirection.z * velocity * delta
-            // console.log(body.position)
-            this.body.position.set(this.body.position.x + moveX, this.body.position.y, this.body.position.z + moveZ)
+            
             this.model.position.x += moveX
             this.model.position.z += moveZ
             this.updateCameraTarget(moveX, moveZ)
-            this.samePostion(this.body.position,this.model.position)
+            this.samePostion(this.model)
         }
     }
 
-    samePostion(bodyPos, modelPos) {
-        console.log(bodyPos)
-        console.log(modelPos)
-        if (bodyPos.x != modelPos.x && bodyPos.z != modelPos.z) {
-         bodyPos.x == modelPos.x
-         bodyPos.z == modelPos.z
-
+    samePostion(model) {
+const world = new CANNON.World()
+        const shape = new CANNON.Box(
+			new CANNON.Vec3( 1, 3, 1)
+		  );
+		
+		  const body = new CANNON.Body({
+			mass: 0,
+			position: new CANNON.Vec3(0, 3, 0),
+			material: new CANNON.Material(),
+		  });
+		  body.addShape(shape);
+      
+		  body.position.copy(model.position);
+		  world.addBody(body);
+        // body.position.copy(model.position)
     }
-}
 
     
     updateCameraTarget(moveX, moveZ) {
