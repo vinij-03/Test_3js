@@ -1,4 +1,4 @@
-# Three.js Journey
+# Test for loading Scenes and Characters
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
