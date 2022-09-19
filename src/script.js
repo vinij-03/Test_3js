@@ -6,12 +6,13 @@ import * as CANNON from "cannon-es";
 import CannonDebugger from 'cannon-es-debugger'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { CharacterControls } from "./controls";
-import { world } from "./keys";
+// import { Physics } from "./world";
 import * as dat from 'lil-gui'
 
 //Creating three and cannon world-------------------------------
 const canvas = document.querySelector("canvas.webgl");
 const scene = new THREE.Scene()
+export const world = new CANNON.World();
 world.broadphase = new CANNON.SAPBroadphase(world);
 world.allowSleep = true;
 world.gravity.set(0, -9.82, 0);
@@ -46,19 +47,19 @@ scene.add( gridHelper );
  }
  
  gui.add(debugObject, 'createSphere')
- debugObject.reset = () =>
-{
-    for(const object of objectsToUpdate)
-    {
-        // Remove body
-        object.body.removeEventListener('collide', playHitSound)
-        world.removeBody(object.body)
+//  debugObject.reset = () =>
+// {
+//     for(const object of objectsToUpdate)
+//     {
+//         // Remove body
+//         object.body.removeEventListener('collide', playHitSound)
+//         world.removeBody(object.body)
 
-        // Remove mesh
-        scene.remove(object.mesh)
-    }
-}
-gui.add(debugObject, 'reset')
+//         // Remove mesh
+//         scene.remove(object.mesh)
+//     }
+// }
+// gui.add(debugObject, 'reset')
 
 //defining materials------------------------------------------
 

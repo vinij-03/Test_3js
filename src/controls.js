@@ -1,7 +1,10 @@
 import * as THREE from 'three'
 import * as CANNON from 'cannon-es';
+import {world} from './script'
+
+import CannonDebugger from 'cannon-es-debugger'
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { A, D, DIRECTIONS, S, W, world} from './keys'
+import { A, D, DIRECTIONS, S, W} from './keys'
 
 
 export class CharacterControls {
@@ -14,6 +17,7 @@ export class CharacterControls {
     // state
     toggleRun 
     currentAction
+    body
     
     // temporary data
     walkDirection = new THREE.Vector3()
@@ -28,15 +32,11 @@ export class CharacterControls {
 
     constructor(model,
         mixer, 
-        // body,
-        // body1,
         animationsMap,
         orbitControl ,
         camera,
         currentAction) {
         this.model = model
-        // this.body  = body
-        // this.body1 = body1
         this.mixer = mixer
         this.animationsMap = animationsMap
         this.currentAction = currentAction
@@ -48,6 +48,19 @@ export class CharacterControls {
         this.orbitControl = orbitControl
         this.camera = camera
         this.updateCameraTarget(0,0)
+        const shape = new CANNON.Box(
+			new CANNON.Vec3( 1, 3, 1)
+		  );
+          //new cannon soldier body
+		const body = new CANNON.Body({
+			mass: 0,
+			position: new CANNON.Vec3(0, 0, 0),
+			material: new CANNON.Material(),
+		  });
+		body.addShape(shape);
+        this.body = body
+        world.addBody(body);
+        
     }
 
     switchRunToggle() {
@@ -109,22 +122,22 @@ export class CharacterControls {
             this.samePostion(this.model)
         }
     }
-
+    
+    
     samePostion(model) {
-const world = new CANNON.World()
-        const shape = new CANNON.Box(
-			new CANNON.Vec3( 1, 3, 1)
-		  );
+        // const shape = new CANNON.Box(
+		// 	new CANNON.Vec3( 1, 3, 1)
+		//   );
 		
-		  const body = new CANNON.Body({
-			mass: 0,
-			position: new CANNON.Vec3(0, 3, 0),
-			material: new CANNON.Material(),
-		  });
-		  body.addShape(shape);
+		//   const body = new CANNON.Body({
+		// 	mass: 0,
+		// 	position: new CANNON.Vec3(0, 3, 0),
+		// 	material: new CANNON.Material(),
+		//   });
+		//   body.addShape(shape);
       
-		  body.position.copy(model.position);
-		  world.addBody(body);
+		  this.body.position.copy(model.position);
+		//   world.addBody(body);
         // body.position.copy(model.position)
     }
 
