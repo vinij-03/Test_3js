@@ -12,6 +12,7 @@ import * as dat from 'lil-gui'
 //Creating three and cannon world-------------------------------
 const canvas = document.querySelector("canvas.webgl");
 const scene = new THREE.Scene()
+// const world = new CANNON.World();
 world.broadphase = new CANNON.SAPBroadphase(world);
 world.allowSleep = true;
 world.gravity.set(0, -9.82, 0);
