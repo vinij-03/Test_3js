@@ -51,9 +51,10 @@ export class CharacterControls {
         const shape = new CANNON.Box(
 			new CANNON.Vec3( 1, 3, 1)
 		  );
+
           //new cannon soldier body
 		const body = new CANNON.Body({
-			mass: 0,
+			mass: 1000,
 			position: new CANNON.Vec3(0, 0, 0),
 			material: new CANNON.Material(),
 		  });
@@ -125,9 +126,10 @@ export class CharacterControls {
     
     
     samePostion(model) {
-        console.log(model.position)
+        // console.log(model.position)
       
-         body.position.copy(model.position)
+        model.position.copy(this.body.position)
+        // console.log(model.quaternion);
     }
 
     
